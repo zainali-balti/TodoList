@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    *{
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    .todo{
+        margin-top: 20px;
+        width: 100%;
+        background-color: yellow;
+    }
+    .todo .inner{
+        margin: auto;
+        width: 50%;
+        border: 2px solid black;
+        text-align: center;
+    }
+    .todo .inner h1{
+        color: blue;
+        font-size: 50px;
+        margin-bottom: 50px;
+    }
+    .todo .inner #search{
+        width: 400px;
+        height: 50px;
+        font-size: 20px;
+    }
+    .todo .inner .btn{
+        width: 50px;
+        height: 50px;
+        font-size: 24px;
+        color: white;
+        background-color: black;
+    }
+    .todo .inner p{
+        font-size: 18px;
+    }
+    .todo .inner p ul li {
+        list-style: none;
+        padding-top: 20px;
+        padding-bottom: 20px;
+        padding-right: 30pxs;
+    }
+    .todo .inner p ul li button{
+        background-color: black;
+        color: white;
+        width: 200px;
+        height: 40px;
+        border-radius: 10px;
+    } 
+
+</style>
+<body>
+
+    <div class="todo">
+        <div class="inner">
+            <h1>TODOLIST</h1>
+            <input type="text" placeholder="Enter Name" name="" id="search">
+            <button class="btn" onclick="add()">+</button>
+            <p id="data"></p>
+        </div>
+        
+       
+    </div>
+
+    <script>
+        getAll();
+        function add(){
+            let getVal = document.getElementById("search").value
+            let obj = {
+            "task": getVal
+        }
+
+        let ajax= new XMLHttpRequest();
+        ajax.open("POST" , "http://localhost:3000/todoList")
+        ajax.setRequestHeader("content-type","application/json")
+        ajax.onprogress=function(){}
+        ajax.onload = function(){
+        }
+
+        ajax.send(JSON.stringify(obj))
+        }
+        function getAll(){
+
+        let ajax= new XMLHttpRequest();
+        ajax.open("GET" , "http://localhost:3000/todoList")
+        ajax.setRequestHeader("content-type","application/json")
+        ajax.onprogress=function(){}
+        ajax.onload = function(){
+           let task = JSON.parse(this.response)
+           let ulList = "<ul>"
+           for(var i=0 ; i<task.length ; i++){
+                    ulList += `<li><span>${task[i].id}</span> <span>${task[i].task}</span> <span><button>Edit</button></span> <span><button onclick="deleteLine(${i})">Delete</button></span>
+                        </li>`
+                }
+                ulList +="</ul>"
+                document.getElementById("data").innerHTML = ulList;
+
+        }
+
+        ajax.send()
+        }
+       function deleteLine(id){
+        let ajax= new XMLHttpRequest();
+        ajax.open("DELETE" , "http://localhost:3000/todoList/id")
+        ajax.setRequestHeader("content-type","application/json")
+        ajax.onprogress=function(){}
+        ajax.onload = function(){
+            console.log(this.response);
+        }
+
+        ajax.send()
+       }
+    </script>
+    
+</body>
+</html>
